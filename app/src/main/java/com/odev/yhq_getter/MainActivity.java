@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int MSG_YHQ = 96;
 
     private Handler mHandler;
-    private boolean mIsStart;
+    private boolean mIsRunning;
     private long mStartTs, mIntervalMillis;
+    private int mCnt, mSumMaxCnt, mCurrSumCnt;
     private Button mBtn;
 
     @Override
@@ -43,11 +44,19 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MSG_YHQ:
-                        if (System.currentTimeMillis() + 2000 >= mStartTs) {
-                            doYhq();
+                        long diff = mStartTs - System.currentTimeMillis();
+                        if (diff  <= 0) {
+                            int cnt = 0;
+                            while(cnt < mCnt && mCurrSumCnt < mSumMaxCnt) {
+                                doYhq();
+                                cnt++;
+                                mCurrSumCnt++;
+                            }
+                        } else {
+                            Log.i("yhq", "running diff >>> " + diff);
                         }
                         synchronized (MainActivity.this) {
-                            if (mIsStart) {
+                            if (mIsRunning) {
                                 long timeDelay = 20 + (int)(Math.random() * mIntervalMillis);
                                 mHandler.sendEmptyMessageDelayed(MSG_YHQ, timeDelay);
                             }
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 synchronized (MainActivity.this) {
-                    if(mIsStart) {
+                    if(mIsRunning) {
                         stopYhq();
                         mBtn.setText("start");
                     } else {
@@ -84,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         .subscribe(new Consumer<BaseResult>() {
                             @Override
                             public void accept(BaseResult baseResult) throws Exception {
-                                Log.i("doYhq", baseResult.getCode());
+                                Log.i("doYhq", baseResult.getSubCodeMsg());
                             }
                         }, new Consumer<Throwable>() {
                             @Override
@@ -97,21 +106,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startYhq() {
-        String tsStr = ((EditText) findViewById(R.id.time_etv)).getText().toString();
-        mStartTs = getStartTs(tsStr);
-        mIntervalMillis = Long.valueOf(((EditText)findViewById(R.id.time_millis_etv)).getText().toString());
 
         synchronized (MainActivity.this) {
-            mIsStart = true;
+            if (mIsRunning) {
+                return;
+            }
+            mIsRunning = true;
         }
+
+        String tsStr = ((EditText) findViewById(R.id.time_etv)).getText().toString();
+        mStartTs = getStartTs(tsStr);
+        mIntervalMillis = Long.valueOf(((EditText)findViewById(R.id.interval_millis_etv)).getText().toString());
+        mCnt = Integer.valueOf(((EditText)findViewById(R.id.cnt_etv)).getText().toString());
+        mSumMaxCnt = Integer.valueOf(((EditText)findViewById(R.id.sum_etv)).getText().toString());
+
         mHandler.sendEmptyMessage(MSG_YHQ);
 
     }
 
     private void stopYhq() {
         synchronized (MainActivity.this) {
-            mIsStart = false;
+            mIsRunning = false;
         }
+        mCnt = 0;
+        mSumMaxCnt = 0;
+        mCurrSumCnt = 0;
         mHandler.removeMessages(MSG_YHQ);
     }
 
