@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/time_etv"
+        android:layout_width="match_parent"
+        android:hint="start time"
+        android:text="2018-10-26 10:59:58.000"
+        android:layout_height="50dip"/>
+    <EditText
+        android:id="@+id/time_millis_etv"
+        android:layout_width="match_parent"
+        android:hint="interval"
+        android:text="999999"
+        android:layout_height="50dip"/>
+
+    <Button
+        android:id="@+id/start_btn"
+        android:text="start"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"/>
+
+</LinearLayout>
