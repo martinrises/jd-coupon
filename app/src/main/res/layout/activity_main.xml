@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:hint="start time"
-        android:text="2018-10-26 19:59:58.000"/>
+        android:text="2018-10-26 19:59:58.500"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:layout_weight="1"
             android:layout_height="50dip"
             android:hint="sum_cnt"
-            android:text="99"/>
+            android:text="999"/>
     </LinearLayout>
 
     <Button
